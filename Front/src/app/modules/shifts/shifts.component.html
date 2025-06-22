@@ -1,0 +1,161 @@
+<div class="shifts-container">
+  <!-- Current Shift Card -->
+  <mat-card class="current-shift-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>access_time</mat-icon>
+        Current Shift
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div *ngIf="(currentShift$ | async); else noActiveShift" class="active-shift">
+        <div class="shift-info" *ngIf="currentShift$ | async as currentShift">
+          <div class="info-grid">
+            <div class="info-item">
+              <mat-icon>schedule</mat-icon>
+              <div>
+                <strong>Started:</strong>
+                <span>{{ currentShift.start_time | date:'medium' }}</span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <mat-icon>timer</mat-icon>
+              <div>
+                <strong>Duration:</strong>
+                <span class="duration">{{ shiftDuration$ | async }}</span>
+              </div>
+            </div>
+
+<!--            <div class="info-item">-->
+<!--              <mat-icon>directions_car</mat-icon>-->
+<!--              <div>-->
+<!--                <strong>Vehicle:</strong>-->
+<!--                <span>{{ sh shift.cab_info?.vehicle_info?.brand?.brand_name + " " + shift.cab_info?.vehicle_info?.vehicle_model }}</span>-->
+<!--              </div>-->
+<!--            </div>-->
+          </div>
+
+          <button
+            mat-raised-button
+            color="warn"
+            class="end-shift-btn"
+            (click)="endShift()"
+            [disabled]="loading$ | async">
+            <mat-icon>stop</mat-icon>
+            End Shift
+          </button>
+        </div>
+      </div>
+
+      <ng-template #noActiveShift>
+        <div class="no-active-shift">
+          <mat-icon>local_taxi</mat-icon>
+          <h3>No active shift</h3>
+          <p>Start a new shift to begin accepting rides</p>
+
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="loadAvailableVehicles()"
+            [disabled]="loading$ | async">
+            <mat-icon>play_arrow</mat-icon>
+            Start Shift
+          </button>
+
+          <!-- Vehicle Selection -->
+          <div *ngIf="showVehicleSelection" class="vehicle-selection">
+            <div class="selection-header">
+              <h3>Select Vehicle</h3>
+              <button mat-icon-button (click)="cancelVehicleSelection()">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+
+            <app-loading-spinner *ngIf="loading$ | async"></app-loading-spinner>
+
+            <div *ngIf="!(loading$ | async)" class="vehicles-grid">
+              <mat-card
+                *ngFor="let cab of availableCabs$ | async;"
+                class="vehicle-card"
+              >
+
+                <mat-card-content>
+                  <div class="vehicle-header">
+                    <h4>{{ cab.vehicle_info.brand.brand_name + " " +  cab.vehicle_info.vehicle_model }}</h4>
+<!--                    <mat-chip [color]="vehicle.tier === 'comfort' ? 'accent' : 'primary'">-->
+<!--                      {{ vehicle.tier | titlecase }}-->
+<!--                    </mat-chip>-->
+                  </div>
+
+                  <div class="vehicle-details">
+                    <div class="detail">
+                      <mat-icon>confirmation_number</mat-icon>
+                      <span>VIN: {{ cab.vin }}</span>
+                    </div>
+                  </div>
+
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    class="select-vehicle-btn"
+                    (click)="startShift(cab.cab_id)">
+                    <mat-icon>check</mat-icon>
+                    Select Vehicle
+                  </button>
+                </mat-card-content>
+              </mat-card>
+
+              <div *ngIf="(availableCabs$ | async)?.length === 0" class="no-vehicles">
+                <mat-icon>error_outline</mat-icon>
+                <p>No vehicles available</p>
+                <small>Please register with a taxi company first</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Shift History Card -->
+  <mat-card class="history-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>history</mat-icon>
+        Recent Shifts
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-list *ngIf="(shiftHistory$ | async)!.length > 0; else noHistory">
+        <mat-list-item
+          *ngFor="let shift of shiftHistory$ | async; trackBy: trackByShiftId"
+          class="shift-item">
+
+          <div *ngIf="shift.end_time">
+            <div class="shift-primary">
+              <strong>{{ shift.start_time | date:'short' }}</strong>
+              <span *ngIf="shift.end_time" class="end-time"> - {{ shift.end_time | date:'short' }}</span>
+            </div>
+            <div class="shift-secondary">
+              <span class="fix-width">Vehicle: {{ shift.cab_info?.vehicle_info?.brand?.brand_name + " " + shift.cab_info?.vehicle_info?.vehicle_model }}</span>
+              <span class="duration">Duration: {{ getShiftDuration(shift) }}</span>
+              <span class="fix-width">Rate: {{shift.rate_info?.tier_info?.tier_name}}</span>
+            </div>
+          </div>
+
+        </mat-list-item>
+      </mat-list>
+
+      <ng-template #noHistory>
+        <div class="no-history">
+          <mat-icon>schedule</mat-icon>
+          <h3>No shift history</h3>
+          <p>Your completed shifts will appear here</p>
+        </div>
+      </ng-template>
+    </mat-card-content>
+  </mat-card>
+</div>

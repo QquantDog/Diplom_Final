@@ -1,0 +1,297 @@
+.shifts-container {
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.current-shift-card, .history-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+// Current Shift Styles
+.active-shift {
+  padding: 1rem 0;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f5f5f5;
+  border-radius: 8px;
+
+  mat-icon {
+    color: #666;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+
+    strong {
+      font-size: 0.875rem;
+      color: #666;
+      margin-bottom: 0.25rem;
+    }
+
+    span {
+      font-size: 1rem;
+
+      &.duration {
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+        color: #4caf50;
+        font-size: 1.1rem;
+      }
+    }
+  }
+}
+
+.end-shift-btn {
+  width: 100%;
+  height: 48px;
+  font-size: 16px;
+
+  mat-icon {
+    margin-right: 0.5rem;
+  }
+}
+
+// No Active Shift Styles
+.no-active-shift {
+  text-align: center;
+  padding: 2rem;
+
+  > mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #ccc;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    margin: 0 0 0.5rem 0;
+    color: #666;
+  }
+
+  p {
+    margin: 0 0 2rem 0;
+    color: #999;
+  }
+
+  > button {
+    min-width: 160px;
+    height: 48px;
+
+    mat-icon {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+// Vehicle Selection Styles
+.vehicle-selection {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.selection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+
+  h3 {
+    margin: 0;
+    color: #333;
+  }
+}
+
+.vehicles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.vehicle-card {
+  border-radius: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 2px solid transparent;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &.economy {
+    border-color: #2196f3;
+  }
+
+  &.comfort {
+    border-color: #ff9800;
+  }
+}
+
+.vehicle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  h4 {
+    margin: 0;
+    color: #333;
+  }
+}
+
+.vehicle-details {
+  margin-bottom: 1.5rem;
+
+  .detail {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #666;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+.select-vehicle-btn {
+  width: 100%;
+
+  mat-icon {
+    margin-right: 0.5rem;
+  }
+}
+
+.no-vehicles {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1rem;
+    color: #ccc;
+  }
+
+  p {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+  }
+
+  small {
+    color: #999;
+  }
+}
+
+// Shift History Styles
+.shift-item {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 0;
+
+  //&:last-child {
+  //  border-bottom: none;
+  //}
+}
+
+.shift-primary {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.25rem;
+
+  .end-time {
+    color: #666;
+  }
+}
+
+.shift-secondary {
+  display: flex;
+  justify-content: space-between;
+  color: #666;
+  font-size: 0.9rem;
+
+  .duration {
+    font-weight: 500;
+    color: #4caf50;
+  }
+}
+
+.no-history {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #666;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+
+  h3 {
+    margin: 0 0 0.5rem 0;
+    font-weight: 400;
+  }
+
+  p {
+    margin: 0;
+    opacity: 0.7;
+  }
+}
+
+@media (max-width: 768px) {
+  .shifts-container {
+    padding: 0.5rem;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .vehicles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .shift-secondary {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+}
+
+.fix-width {
+  display: inline-block;
+  min-width: 250px;
+}
+
+.mat-mdc-card-content {
+  padding: 16px;
+}

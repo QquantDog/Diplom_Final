@@ -1,0 +1,141 @@
+.profile-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--app-spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-spacing-lg);
+}
+
+.profile-card {
+  border-radius: var(--app-radius-lg);
+  box-shadow: var(--app-elevation-2);
+}
+
+.profile-avatar {
+  background-color: var(--app-primary-container);
+  color: var(--app-on-primary-container);
+
+  mat-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.profile-form {
+  margin-top: var(--app-spacing-md);
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-spacing-md);
+}
+
+.name-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--app-spacing-md);
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: var(--app-spacing-sm);
+  }
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--app-spacing-md);
+  margin-top: var(--app-spacing-lg);
+  padding-top: var(--app-spacing-md);
+  border-top: 1px solid var(--app-outline-variant);
+
+  @media (max-width: 600px) {
+    flex-direction: column-reverse;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+.settings-card {
+  border-radius: var(--app-radius-lg);
+  box-shadow: var(--app-elevation-2);
+
+  mat-card-title {
+    display: flex;
+    align-items: center;
+    gap: var(--app-spacing-sm);
+
+    mat-icon {
+      color: var(--app-primary);
+    }
+  }
+}
+
+.settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-spacing-md);
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--app-spacing-md);
+
+  &.danger {
+    .setting-info h4 {
+      color: var(--app-error);
+    }
+  }
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--app-spacing-sm);
+  }
+}
+
+.setting-info {
+  flex: 1;
+
+  h4 {
+    margin: 0 0 var(--app-spacing-xs) 0;
+    font-size: var(--app-font-size-base);
+    font-weight: 600;
+    color: var(--app-on-surface);
+  }
+
+  p {
+    margin: 0;
+    font-size: var(--app-font-size-sm);
+    color: var(--app-on-surface-variant);
+    line-height: var(--app-line-height-normal);
+  }
+}
+
+// Global snackbar styles
+::ng-deep {
+  .success-snackbar {
+    background-color: var(--app-tertiary-container) !important;
+    color: var(--app-on-tertiary-container) !important;
+  }
+
+  .error-snackbar {
+    background-color: var(--app-error-container) !important;
+    color: var(--app-on-error-container) !important;
+  }
+}
+
+.form-grid > .mat-mdc-form-field {
+  margin-top: 10px;
+}

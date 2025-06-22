@@ -1,0 +1,568 @@
+<div class="rides-container">
+  <mat-card class="rides-card">
+    <mat-card-header class="main-header">
+      <div mat-card-avatar class="header-avatar">
+        <mat-icon>local_taxi</mat-icon>
+      </div>
+      <mat-card-title>Rides Management</mat-card-title>
+      <mat-card-subtitle>
+        View and manage taxi rides with advanced filtering
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content class="main-content">
+      <div class="controls-wrapper">
+        <div class="search-section">
+<!--          <form [formGroup]="searchForm" class="search-form">-->
+<!--            <mat-form-field appearance="outline" class="search-field">-->
+<!--              <mat-label>Search rides</mat-label>-->
+<!--              <input matInput formControlName="search" placeholder="Search by location, status, ride ID...">-->
+<!--              <mat-icon matSuffix>search</mat-icon>-->
+<!--            </mat-form-field>-->
+<!--          </form>-->
+
+          <div class="search-actions">
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="toggleFilters()"
+              class="filter-toggle-btn"
+              [class.active]="showFilters">
+              <mat-icon>tune</mat-icon>
+              <span>Advanced Filters</span>
+              <mat-icon class="expand-icon" [class.rotated]="showFilters">expand_more</mat-icon>
+            </button>
+
+            <button
+              mat-stroked-button
+              color="warn"
+              *ngIf="hasActiveFilters$ | async"
+              (click)="onClearFilters()"
+              class="clear-filters-btn">
+              <mat-icon>clear_all</mat-icon>
+              <span>Clear All</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Advanced Filters Panel -->
+        <div class="filters-panel" [class.expanded]="showFilters">
+          <div class="filters-container">
+            <form [formGroup]="filterForm" class="filter-form">
+              <div class="filter-header">
+                <h3>Advanced Filters</h3>
+                <p>Refine your search with specific criteria</p>
+              </div>
+
+              <div class="filter-sections">
+                <!-- Price & Financial Section -->
+                <div class="filter-section">
+                  <div class="section-header">
+                    <mat-icon>attach_money</mat-icon>
+                    <h4>Price & Financial</h4>
+                  </div>
+                  <div class="section-content">
+                    <div class="form-row">
+                      <mat-form-field appearance="outline">
+                        <mat-label>Min Price</mat-label>
+                        <input matInput type="number" formControlName="minPrice" min="0" step="0.01">
+                      </mat-form-field>
+                      <mat-form-field appearance="outline">
+                        <mat-label>Max Price</mat-label>
+                        <input matInput type="number" formControlName="maxPrice" min="0" step="0.01">
+                      </mat-form-field>
+                    </div>
+                    <div class="form-row">
+                      <mat-form-field appearance="outline">
+                        <mat-label>Min Tip</mat-label>
+                        <input matInput type="number" formControlName="minTip" min="0" step="0.01">
+                      </mat-form-field>
+                      <mat-form-field appearance="outline">
+                        <mat-label>Max Tip</mat-label>
+                        <input matInput type="number" formControlName="maxTip" min="0" step="0.01">
+                      </mat-form-field>
+                    </div>
+                    <div class="form-row single">
+                      <mat-form-field appearance="outline">
+                        <mat-label>Payment Method</mat-label>
+                        <mat-select formControlName="paymentMethod" multiple>
+                          <mat-option *ngFor="let method of paymentMethodOptions" [value]="method.value">
+                            {{ method.label }}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Time Range Section -->
+                <div class="filter-section">
+                  <div class="section-header">
+                    <mat-icon>schedule</mat-icon>
+                    <h4>Time Range</h4>
+                  </div>
+                  <div class="section-content">
+                    <div class="time-group">
+                      <label class="time-group-label">Start Time Range</label>
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>From</mat-label>
+                          <input matInput type="datetime-local" formControlName="startTimeFrom">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>To</mat-label>
+                          <input matInput type="datetime-local" formControlName="startTimeTo">
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="time-group">
+                      <label class="time-group-label">End Time Range</label>
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>From</mat-label>
+                          <input matInput type="datetime-local" formControlName="endTimeFrom">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>To</mat-label>
+                          <input matInput type="datetime-local" formControlName="endTimeTo">
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Distance & Status Section -->
+                <div class="filter-section">
+                  <div class="section-header">
+                    <mat-icon>straighten</mat-icon>
+                    <h4>Distance & Status</h4>
+                  </div>
+                  <div class="section-content">
+                    <div class="form-row">
+                      <mat-form-field appearance="outline">
+                        <mat-label>Min Distance</mat-label>
+                        <input matInput type="number" formControlName="minDistance" min="0">
+                      </mat-form-field>
+                      <mat-form-field appearance="outline">
+                        <mat-label>Max Distance</mat-label>
+                        <input matInput type="number" formControlName="maxDistance" min="0">
+                      </mat-form-field>
+                    </div>
+                    <div class="form-row single">
+                      <mat-form-field appearance="outline">
+                        <mat-label>Status</mat-label>
+                        <mat-select formControlName="status" multiple>
+                          <mat-option *ngFor="let status of statusOptions" [value]="status.value">
+                            {{ status.label }}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="filter-actions">
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="onSearch()"
+                  class="apply-btn">
+                  <mat-icon>search</mat-icon>
+                  Apply Filters
+                </button>
+                <button
+                  mat-stroked-button
+                  (click)="onClearFilters()"
+                  class="reset-btn">
+                  <mat-icon>refresh</mat-icon>
+                  Reset All
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading Spinner -->
+      <div class="loading-section" *ngIf="loading$ | async">
+        <app-loading-spinner></app-loading-spinner>
+      </div>
+
+      <!-- Rides List -->
+      <div *ngIf="!(loading$ | async)" class="rides-section">
+        <div class="rides-header" *ngIf="(rides$ | async)!.length > 0">
+          <h3 class="black-header">Ride Results</h3>
+          <span class="results-count">{{ (pagination$ | async)?.total }} rides found</span>
+        </div>
+
+        <div class="rides-list">
+          <mat-expansion-panel
+            *ngFor="let ride of rides$ | async;"
+            class="ride-panel">
+
+            <mat-expansion-panel-header class="ride-header">
+              <mat-panel-title>
+                <div class="ride-title-section">
+                  <div class="ride-icon">
+                    <mat-icon>local_taxi</mat-icon>
+                  </div>
+                  <div class="ride-title-info">
+                    <h4 class="black-header">Ride #{{ ride.id }}</h4>
+                    <span class="ride-created">{{ ride.created_at | date:'short' }}</span>
+                  </div>
+                </div>
+              </mat-panel-title>
+<!--              <mat-panel-description>-->
+<!--                <div class="ride-summary-section">-->
+<!--                  <div class="summary-badges">-->
+<!--                    <mat-chip [color]="getStatusColor(ride.status)" selected class="status-chip">-->
+<!--                      {{ ride.status.replace('_', ' ') | titlecase }}-->
+<!--                    </mat-chip>-->
+<!--                  </div>-->
+<!--                  <div class="summary-info">-->
+<!--                    <div class="info-item">-->
+<!--                      <mat-icon>attach_money</mat-icon>-->
+<!--                      <span>{{ formatPrice(ride.actual_price || ride.expected_price) }}</span>-->
+<!--                    </div>-->
+<!--                    <div class="info-item">-->
+<!--                      <mat-icon>straighten</mat-icon>-->
+<!--                      <span>{{ formatDistance(ride.distance_actual_meters || ride.distance_expected_meters) }}</span>-->
+<!--                    </div>-->
+<!--                    <div class="info-item" *ngIf="ride.ride_tip > 0">-->
+<!--                      <mat-icon>thumb_up</mat-icon>-->
+<!--                      <span>{{ formatPrice(ride.ride_tip) }} tip</span>-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </mat-panel-description>-->
+            </mat-expansion-panel-header>
+
+            <div class="ride-details-wrapper">
+              <div class="details-container">
+
+                <div class="details-block timeline-block">
+                  <div class="block-header">
+                    <div class="block-icon">
+                      <mat-icon>schedule</mat-icon>
+                    </div>
+                    <div class="block-title">
+                      <h4>Timeline & Dates</h4>
+                      <p>Ride timeline and important timestamps</p>
+                    </div>
+                  </div>
+                  <div class="block-content">
+                    <div class="timeline-grid">
+                      <div class="timeline-item" *ngIf="ride.created_at">
+                        <div class="timeline-marker created"></div>
+                        <div class="timeline-content">
+                          <span class="timeline-label">Created</span>
+                          <span class="timeline-value">{{ ride.created_at | date:'medium' }}</span>
+                        </div>
+                      </div>
+
+                      <div class="timeline-item" *ngIf="ride.accepted_at">
+                        <div class="timeline-marker accepted"></div>
+                        <div class="timeline-content">
+                          <span class="timeline-label">Accepted</span>
+                          <span class="timeline-value">{{ ride.accepted_at | date:'medium' }}</span>
+                        </div>
+                      </div>
+
+                      <div class="timeline-item" *ngIf="ride.driver_waiting">
+                        <div class="timeline-marker waiting"></div>
+                        <div class="timeline-content">
+                          <span class="timeline-label">Driver Waiting Since</span>
+                          <span class="timeline-value">{{ ride.driver_waiting | date:'medium' }}</span>
+                        </div>
+                      </div>
+
+                      <div class="timeline-item" *ngIf="ride.start_time">
+                        <div class="timeline-marker started"></div>
+                        <div class="timeline-content">
+                          <span class="timeline-label">Started</span>
+                          <span class="timeline-value">{{ ride.start_time | date:'medium' }}</span>
+                        </div>
+                      </div>
+
+                      <div class="timeline-item" *ngIf="ride.end_time">
+                        <div class="timeline-marker completed"></div>
+                        <div class="timeline-content">
+                          <span class="timeline-label">Completed</span>
+                          <span class="timeline-value">{{ ride.end_time | date:'medium' }}</span>
+                        </div>
+                      </div>
+
+                      <div class="timeline-item duration-item" *ngIf="ride.start_time && ride.end_time">
+                        <div class="timeline-marker duration"></div>
+                        <div class="timeline-content">
+                          <span class="timeline-label">Total Duration</span>
+                          <span class="timeline-value highlight">{{ formatDuration(ride.start_time, ride.end_time) }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Location & Distance Block -->
+                <div class="details-block location-block">
+                  <div class="block-header">
+                    <div class="block-icon">
+                      <mat-icon>place</mat-icon>
+                    </div>
+                    <div class="block-title">
+                      <h4>Location & Distance</h4>
+                      <p>Geographic details and distance information</p>
+                    </div>
+                  </div>
+                  <div class="block-content">
+                    <div class="location-grid">
+                      <div class="location-item start-location">
+                        <div class="location-icon">
+                          <mat-icon>my_location</mat-icon>
+                        </div>
+                        <div class="location-info">
+                          <span class="location-label">Start Point</span>
+                          <span class="location-coordinates">{{ formatCoordinates(ride.start_point) }}</span>
+                        </div>
+                      </div>
+
+                      <div class="location-separator">
+                        <mat-icon>trending_flat</mat-icon>
+                      </div>
+
+                      <div class="location-item end-location">
+                        <div class="location-icon">
+                          <mat-icon>location_on</mat-icon>
+                        </div>
+                        <div class="location-info">
+                          <span class="location-label">End Point</span>
+                          <span class="location-coordinates">{{ formatCoordinates(ride.end_point) }}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="distance-info">
+                      <div class="distance-item" *ngIf="ride.distance_expected_meters">
+                        <mat-icon>straighten</mat-icon>
+                        <div class="distance-content">
+                          <span class="distance-label">Expected Distance</span>
+                          <span class="distance-value">{{ formatDistance(ride.distance_expected_meters) }}</span>
+                        </div>
+                      </div>
+
+                      <div class="distance-item" *ngIf="ride.distance_actual_meters">
+                        <mat-icon>near_me</mat-icon>
+                        <div class="distance-content">
+                          <span class="distance-label">Actual Distance</span>
+                          <span class="distance-value primary">{{ formatDistance(ride.distance_actual_meters) }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Pricing & Rate Block -->
+                <div class="details-block pricing-block">
+                  <div class="block-header">
+                    <div class="block-icon">
+                      <mat-icon>monetization_on</mat-icon>
+                    </div>
+                    <div class="block-title">
+                      <h4>Pricing & Rates</h4>
+                      <p>Price breakdown and rate information</p>
+                    </div>
+                  </div>
+                  <div class="block-content">
+
+                    <!-- Price Summary -->
+                    <div class="price-summary">
+                      <div class="price-item" *ngIf="ride.expected_price">
+                        <span class="price-label">Expected Price</span>
+                        <span class="price-value">{{ formatPrice(ride.expected_price) }}</span>
+                      </div>
+                      <div class="price-item" *ngIf="ride.actual_price">
+                        <span class="price-label">Actual Price</span>
+                        <span class="price-value primary">{{ formatPrice(ride.actual_price) }}</span>
+                      </div>
+                      <div class="price-item" *ngIf="ride.ride_tip > 0">
+                        <span class="price-label">Tip Amount</span>
+                        <span class="price-value accent">{{ formatPrice(ride.ride_tip) }}</span>
+                      </div>
+                    </div>
+
+                    <!-- Payment Info -->
+                    <div class="payment-info" *ngIf="ride.payment_info">
+                      <div class="payment-header">
+                        <mat-icon>payment</mat-icon>
+                        <span>Payment Details</span>
+                      </div>
+                      <div class="payment-content">
+                        <div class="payment-item">
+                          <span class="payment-label">Total Amount</span>
+                          <span class="payment-value">{{ formatPrice(ride.payment_info.overall_price) }}</span>
+                        </div>
+                        <div class="payment-item">
+                          <span class="payment-label">Payment Method</span>
+                          <mat-chip selected class="payment-method-chip">
+                            {{ ride.payment_info.method | titlecase }}
+                          </mat-chip>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Rate Information -->
+                    <div class="rate-info" *ngIf="ride.accepted_rate_info">
+                      <div class="rate-header">
+                        <mat-icon>speed</mat-icon>
+                        <span>Rate</span>
+                      </div>
+                      <div class="rate-grid">
+                        <div class="rate-item">
+                          <span class="rate-label">Base Price</span>
+                          <span class="rate-value">{{ formatPrice(ride.accepted_rate_info.init_price) }}</span>
+                        </div>
+                        <div class="rate-item">
+                          <span class="rate-label">Per Kilometer</span>
+                          <span class="rate-value">{{ formatPrice(ride.accepted_rate_info.rate_per_km) }}/km</span>
+                        </div>
+                        <div class="rate-item">
+                          <span class="rate-label">Waiting Fee</span>
+                          <span class="rate-value">{{ formatPrice(ride.accepted_rate_info.paid_waiting_per_minute) }}/min</span>
+                        </div>
+                        <div class="rate-item">
+                          <span class="rate-label">Free Wait Time</span>
+                          <span class="rate-value">{{ formatWaitingTime(ride.accepted_rate_info.free_time) }}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Promocode Information -->
+                    <div class="promo-info" *ngIf="ride.promocode_info">
+                      <div class="promo-header">
+                        <mat-icon>local_offer</mat-icon>
+                        <span>Promocode Applied</span>
+                      </div>
+                      <div class="promo-content">
+                        <div class="promo-item">
+                          <span class="promo-label">Code</span>
+                          <mat-chip color="accent" selected class="promo-code">
+                            {{ ride.promocode_info.code }}
+                          </mat-chip>
+                        </div>
+                        <div class="promo-item">
+                          <span class="promo-label">Discount</span>
+                          <span class="promo-value">
+                            <span *ngIf="ride.promocode_info.discount_type === 'fixed'">
+                              {{ formatPrice(ride.promocode_info.discount_amount) }}
+                            </span>
+                            <span *ngIf="ride.promocode_info.discount_type === 'percentage'">
+                              {{ ride.promocode_info.discount_amount }}%
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Shift Information -->
+<!--                    <div class="shift-info" *ngIf="ride.shift_info">-->
+<!--                      <div class="shift-header">-->
+<!--                        <mat-icon>work</mat-icon>-->
+<!--                        <span>Shift Information</span>-->
+<!--                      </div>-->
+<!--                      <div class="shift-content">-->
+<!--                        <span class="shift-label">Shift ID</span>-->
+<!--                        <span class="shift-value">#{{ ride.shift_info.shift_id }}</span>-->
+<!--                      </div>-->
+<!--                    </div>-->
+                  </div>
+                </div>
+
+                <!-- Driver Actions Block -->
+                <div class="details-block actions-block" *ngIf="isDriver$ | async">
+                  <div class="block-header">
+                    <div class="block-icon">
+                      <mat-icon>build</mat-icon>
+                    </div>
+                    <div class="block-title">
+                      <h4>Driver Actions</h4>
+                      <p>Available actions for this ride</p>
+                    </div>
+                  </div>
+                  <div class="block-content">
+                    <div class="actions-grid">
+<!--                      <button-->
+<!--                        mat-raised-button-->
+<!--                        color="primary"-->
+<!--                        *ngIf="canAcceptRide(ride)"-->
+<!--                        (click)="onAcceptRide(ride.id)"-->
+<!--                        class="action-btn accept-btn">-->
+<!--                        <mat-icon>check_circle</mat-icon>-->
+<!--                        <span>Accept Ride</span>-->
+<!--                      </button>-->
+
+<!--                      <button-->
+<!--                        mat-raised-button-->
+<!--                        color="accent"-->
+<!--                        *ngIf="canCompleteRide(ride)"-->
+<!--                        (click)="onCompleteRide(ride.id)"-->
+<!--                        class="action-btn complete-btn">-->
+<!--                        <mat-icon>flag</mat-icon>-->
+<!--                        <span>Complete Ride</span>-->
+<!--                      </button>-->
+
+<!--                      <button-->
+<!--                        mat-stroked-button-->
+<!--                        color="warn"-->
+<!--                        *ngIf="canCancelRide(ride)"-->
+<!--                        (click)="onCancelRide(ride.id)"-->
+<!--                        class="action-btn cancel-btn">-->
+<!--                        <mat-icon>cancel</mat-icon>-->
+<!--                        <span>Cancel Ride</span>-->
+<!--                      </button>-->
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </mat-expansion-panel>
+        </div>
+
+        <!-- No Rides Message -->
+        <div *ngIf="(rides$ | async)?.length === 0" class="no-rides-section">
+          <div class="no-rides-content">
+            <div class="no-rides-icon">
+              <mat-icon>search_off</mat-icon>
+            </div>
+            <h3>No rides found</h3>
+            <p>No rides match your current search and filter criteria.</p>
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="onClearFilters()"
+              *ngIf="hasActiveFilters$ | async"
+              class="clear-filters-action">
+              <mat-icon>clear_all</mat-icon>
+              Clear All Filters
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination Section -->
+      <div class="pagination-section" *ngIf="!(loading$ | async) && (rides$ | async)!.length > 0">
+        <div>before pager</div>
+        <mat-paginator
+          [length]="(pagination$ | async)?.total"
+          [pageSize]="(pagination$ | async)?.pageSize"
+          [pageIndex]="(pagination$ | async)!.currentPage - 1"
+          [pageSizeOptions]="[1, 5, 10, 25]"
+          (page)="onPageChange($event)"
+          showFirstLastButtons
+          class="stylish-paginator">
+        </mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,167 @@
+<!--<div class="companies-container">-->
+<!--  <mat-card>-->
+<!--    <mat-card-header>-->
+<!--      <mat-card-title>-->
+<!--        <mat-icon>business</mat-icon>-->
+<!--        Taxi Companies-->
+<!--      </mat-card-title>-->
+<!--      <mat-card-subtitle>-->
+<!--        Register with taxi companies to access their vehicles-->
+<!--      </mat-card-subtitle>-->
+<!--    </mat-card-header>-->
+
+<!--    <mat-card-content>-->
+<!--      &lt;!&ndash; Search &ndash;&gt;-->
+<!--      <mat-form-field appearance="outline" class="search-field">-->
+<!--        <mat-label>Search companies</mat-label>-->
+<!--        <input matInput [formControl]="searchControl" placeholder="Search by company name...">-->
+<!--        <mat-icon matSuffix>search</mat-icon>-->
+<!--      </mat-form-field>-->
+
+<!--      &lt;!&ndash; Loading Spinner &ndash;&gt;-->
+<!--      <app-loading-spinner *ngIf="loading$ | async"></app-loading-spinner>-->
+
+<!--      &lt;!&ndash; Companies Grid &ndash;&gt;-->
+<!--      <div *ngIf="!(loading$ | async)" class="companies-grid">-->
+<!--        <mat-card-->
+<!--          *ngFor="let company of companies$ | async; trackBy: trackByCompanyId"-->
+<!--          class="company-card">-->
+
+<!--          <mat-card-header>-->
+<!--            <mat-card-title>{{ company.name }}</mat-card-title>-->
+<!--            <mat-card-subtitle>-->
+<!--              Registered: {{ company.registrationDate | date:'shortDate' }}-->
+<!--            </mat-card-subtitle>-->
+<!--          </mat-card-header>-->
+
+<!--          <mat-card-content>-->
+<!--            <div class="company-info">-->
+<!--              <div class="info-item">-->
+<!--                <mat-icon>directions_car</mat-icon>-->
+<!--                <span>{{ company.vehicles.length || 0 }} vehicles</span>-->
+<!--              </div>-->
+
+<!--              <div class="info-item" *ngIf="company.isRegistered">-->
+<!--                <mat-icon color="primary">check_circle</mat-icon>-->
+<!--                <span>Registered</span>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </mat-card-content>-->
+
+<!--          <mat-card-actions>-->
+<!--            <button-->
+<!--              mat-button-->
+<!--              color="primary"-->
+<!--              (click)="onViewCompanyVehicles(company.id)">-->
+<!--              <mat-icon>visibility</mat-icon>-->
+<!--              View Vehicles-->
+<!--            </button>-->
+
+<!--            <button-->
+<!--              mat-raised-button-->
+<!--              color="primary"-->
+<!--              *ngIf="!company.isRegistered"-->
+<!--              (click)="onRegisterToCompany(company.id)">-->
+<!--              <mat-icon>add</mat-icon>-->
+<!--              Register-->
+<!--            </button>-->
+
+<!--            <button-->
+<!--              mat-button-->
+<!--              color="warn"-->
+<!--              *ngIf="company.isRegistered"-->
+<!--              (click)="onUnregisterFromCompany(company.id)">-->
+<!--              <mat-icon>remove</mat-icon>-->
+<!--              Unregister-->
+<!--            </button>-->
+<!--          </mat-card-actions>-->
+<!--        </mat-card>-->
+
+<!--        &lt;!&ndash; No Companies Message &ndash;&gt;-->
+<!--        <div *ngIf="(companies$ | async)?.length === 0" class="no-companies">-->
+<!--          <mat-icon>business</mat-icon>-->
+<!--          <h3>No companies found</h3>-->
+<!--          <p>There are no taxi companies matching your search criteria.</p>-->
+<!--        </div>-->
+<!--      </div>-->
+
+<!--      &lt;!&ndash; Pagination &ndash;&gt;-->
+<!--      <mat-paginator-->
+<!--        *ngIf="!(loading$ | async)"-->
+<!--        [length]="(pagination$ | async)?.total"-->
+<!--        [pageSize]="(pagination$ | async)?.pageSize"-->
+<!--        [pageIndex]="(pagination$ | async)?.currentPage ?? 2 - 1"-->
+<!--        [pageSizeOptions]="[5, 10, 25, 50]"-->
+<!--        (page)="onPageChange($event)"-->
+<!--        showFirstLastButtons>-->
+<!--      </mat-paginator>-->
+<!--    </mat-card-content>-->
+<!--  </mat-card>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; Vehicle Modal &ndash;&gt;-->
+<!--<div *ngIf="selectedCompanyId" class="vehicle-modal-backdrop" (click)="closeVehicleModal()">-->
+<!--  <div class="vehicle-modal" (click)="$event.stopPropagation()">-->
+<!--    <div class="modal-header">-->
+<!--      <h2>{{ getSelectedCompany()?.name }} - Vehicles</h2>-->
+<!--      <button mat-icon-button (click)="closeVehicleModal()">-->
+<!--        <mat-icon>close</mat-icon>-->
+<!--      </button>-->
+<!--    </div>-->
+
+<!--    <div class="modal-content">-->
+<!--      <app-loading-spinner *ngIf="loading$ | async"></app-loading-spinner>-->
+
+<!--      <div *ngIf="!(loading$ | async)" class="vehicles-list">-->
+<!--        <mat-card-->
+<!--          *ngFor="let vehicle of selectedCompanyVehicles$ | async; trackBy: trackByVehicleId"-->
+<!--          class="vehicle-card"-->
+<!--          [class.available]="vehicle.isAvailable"-->
+<!--          [class.unavailable]="!vehicle.isAvailable">-->
+
+<!--          <mat-card-content>-->
+<!--            <div class="vehicle-header">-->
+<!--              <h3>{{ vehicle.name }}</h3>-->
+<!--              <div class="vehicle-status">-->
+<!--                <mat-chip-->
+<!--                  [color]="vehicle.isAvailable ? 'primary' : 'warn'">-->
+<!--                  {{ vehicle.isAvailable ? 'Available' : 'In Use' }}-->
+<!--                </mat-chip>-->
+<!--                <mat-chip-->
+<!--                  [color]="vehicle.tier === 'comfort' ? 'accent' : 'primary'">-->
+<!--                  {{ vehicle.tier | titlecase }}-->
+<!--                </mat-chip>-->
+<!--              </div>-->
+<!--            </div>-->
+
+<!--            <div class="vehicle-details">-->
+<!--              <div class="detail-item">-->
+<!--                <mat-icon>confirmation_number</mat-icon>-->
+<!--                <span>VIN: {{ vehicle.vin }}</span>-->
+<!--              </div>-->
+
+<!--              <div class="detail-item">-->
+<!--                <mat-icon>category</mat-icon>-->
+<!--                <span>Tier: {{ vehicle.tier | titlecase }}</span>-->
+<!--              </div>-->
+
+<!--              <div class="detail-item">-->
+<!--                <mat-icon [style.color]="vehicle.isAvailable ? '#4caf50' : '#f44336'">-->
+<!--                  {{ vehicle.isAvailable ? 'check_circle' : 'cancel' }}-->
+<!--                </mat-icon>-->
+<!--                <span>{{ vehicle.isAvailable ? 'Available for shifts' : 'Currently in use' }}</span>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </mat-card-content>-->
+<!--        </mat-card>-->
+
+<!--        &lt;!&ndash; No Vehicles Message &ndash;&gt;-->
+<!--        <div *ngIf="(selectedCompanyVehicles$ | async)?.length === 0" class="no-vehicles">-->
+<!--          <mat-icon>directions_car</mat-icon>-->
+<!--          <h3>No vehicles available</h3>-->
+<!--          <p>This company doesn't have any vehicles registered.</p>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
